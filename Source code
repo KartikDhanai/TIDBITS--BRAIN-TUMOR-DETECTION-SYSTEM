@@ -1,0 +1,190 @@
+!pip install opendatasets
+import opendatasets as od
+dataset1='https://www.kaggle.com/datasets/jakeshbohaju/brain-tumor'
+dataset2='https://www.kaggle.com/datasets/navoneel/brain-mri-images-for-brain-tumor-detection'
+od.download(dataset1)
+od.download(dataset2)
+import os
+data_dir1='.\\brain-tumor' 
+data_dir2='.\\brain-mri-images-for-brain-tumor-detection'
+os.listdir(data_dir1)
+os.listdir(data_dir2)
+import os
+from os import listdir
+
+paths=[]
+
+for dirname, _, filenames in os.walk('.\\brain-mri-images-for-brain-tumor-detection'):
+    for filename in filenames:
+        paths.append(os.path.join(dirname, filename))
+        print(os.path.join(dirname, filename))
+
+!pip install imutils
+import numpy as np
+import pandas as pd
+import tensorflow as tf
+from tensorflow.keras.layers import Conv2D, Input, ZeroPadding2D, BatchNormalization, Activation, Dropout, MaxPooling2D, Flatten, Dense
+from tensorflow.keras.models import Model, load_model, Sequential
+from tensorflow.keras.callbacks import TensorBoard, ModelCheckpoint
+
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import f1_score
+from sklearn.utils import shuffle
+
+import matplotlib.pyplot as plt
+import time
+import imutils
+
+import cv2      #open cv
+
+
+from PIL import Image 
+from sklearn.preprocessing import OneHotEncoder 
+def contour(image , plot = False):
+    grayscale = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)                         #grayscaling the images
+    grayscale = cv2.GaussianBlur(grayscale, (5,5),0)                            #blur the image to bring it under the threshold
+    threshold_image = cv2.threshold(grayscale, 50, 255, cv2.THRESH_BINARY)[1]   #convert these grayscaled images to binary images
+    threshold_image = cv2.erode(threshold_image, None, iterations=2)            #to remove the regions of noise
+    threshold_image = cv2.dilate(threshold_image, None, iterations=2)           #to remove all the noises around the image
+    
+    #Now we need to find the contour and clean it to get what is inside the image.
+    contour = cv2.findContours(threshold_image.copy(),cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) 
+    
+     #we grab the largest contour using the max.
+    contour = imutils.grab_contours(contour)
+    c = max(contour, key=cv2.contourArea)
+    
+    #Now we limit the image by finding it's extreme points.
+    ext_left = tuple(c[c[:,:,0].argmin()][0])
+    ext_right = tuple(c[c[:,:,0].argmax()][0])
+    ext_top = tuple(c[c[:,:,1].argmin()][0])
+    ext_bot = tuple(c[c[:,:,1].argmax()][0])
+    
+    processed_image = image[ext_top[1]:ext_bot[1],ext_left[0]:ext_right[0]]
+        
+    if plot:
+        plt.figure()
+        plt.subplot(1,2,1)
+        plt.imshow(image)
+        
+        plt.tick_params(axis="both", which="both",
+                       top= False, bottom= False,left= False,right= False,
+                        labeltop= False, labelbottom= False,
+                        labelleft= False,labelright= False)
+        plt.title("ORIGINAL")
+        
+        plt.subplot(1,2,2)
+        plt.imshow(processed_image)
+        
+        plt.tick_params(axis="both", which="both",
+                       top= False, bottom= False,left= False,right= False,
+                        labeltop= False, labelbottom= False,
+                        labelleft= False,labelright= False)
+        plt.title("PROCESSED")
+        plt.show()
+        
+    return processed_image
+for path in paths:
+    img = Image.open(path)
+    img = img.resize((128,128))
+    #img.save()
+    break
+Image.open(paths[0])
+for path in paths:
+    img = cv2.imread(path)
+    img = contour(img, True)
+    """plt.imsave(img,path)"""
+encoder = OneHotEncoder()
+encoder.fit([[0], [1]])
+# This cell updates result list for images with tumor
+data = []
+paths = []
+result = []
+
+for r, d, f in os.walk(r'.\yes'):
+    for file in f:
+        if '.jpg' in file:
+            paths.append(os.path.join(r, file))
+
+for path in paths:
+    img = Image.open(path)
+    img = img.resize((128,128))
+    img = np.array(img)
+    if(img.shape == (128,128,3)):
+        data.append(np.array(img))
+        result.append(encoder.transform([[0]]).toarray())
+# This cell updates result list for images without tumor
+
+paths = []
+for r, d, f in os.walk(r".\no"):
+    for file in f:
+        if '.jpg' in file:
+            paths.append(os.path.join(r, file))
+
+for path in paths:
+    img = Image.open(path)
+    img = img.resize((128,128))
+    img = np.array(img)
+    if(img.shape == (128,128,3)):
+        data.append(np.array(img))
+        result.append(encoder.transform([[1]]).toarray())
+data = np.array(data)
+data.shape
+result = np.array(result)
+result = result.reshape(139,2)
+x_train,x_test,y_train,y_test = train_test_split(data, result, test_size=0.2, shuffle=True, random_state=0)
+model = Sequential()
+
+model.add(Conv2D(32, kernel_size=(2, 2), input_shape=(128, 128, 3), padding = 'Same'))
+model.add(Conv2D(32, kernel_size=(2, 2),  activation ='relu', padding = 'Same'))
+
+
+model.add(BatchNormalization())
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(0.25))
+
+model.add(Conv2D(64, kernel_size = (2,2), activation ='relu', padding = 'Same'))
+model.add(Conv2D(64, kernel_size = (2,2), activation ='relu', padding = 'Same'))
+
+model.add(BatchNormalization())
+model.add(MaxPooling2D(pool_size=(2,2), strides=(2,2)))
+model.add(Dropout(0.25))
+
+model.add(Flatten())
+
+model.add(Dense(512, activation='relu'))
+model.add(Dropout(0.5))
+model.add(Dense(2, activation='softmax'))
+
+model.compile(loss = "categorical_crossentropy", optimizer='Adamax')
+print(model.summary())
+
+history = model.fit(x_train, y_train, epochs = 30, batch_size = 40, verbose = 1,validation_data = (x_test, y_test))
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('Model Loss')
+plt.ylabel('Loss')
+plt.xlabel('Epoch')
+plt.legend(['Test', 'Validation'], loc='upper right')
+plt.show()
+def names(cat):
+    if cat==0:
+        return 'Tumor detected'
+    else:
+        return 'No detected tumor'
+from matplotlib.pyplot import imshow
+img = Image.open(r"./yes/Y69.jpg")
+x = np.array(img.resize((128,128)))
+x = x.reshape(1,128,128,3)
+res = model.predict_on_batch(x)
+classification = np.where(res == np.amax(res))[1][0]
+imshow(img)
+print(str(res[0][classification]*100) + '% Confidence This Is ' + names(classification))
+from matplotlib.pyplot import imshow
+img = Image.open(r"./no/N5.jpg")
+x = np.array(img.resize((128,128)))
+x = x.reshape(1,128,128,3)
+res = model.predict_on_batch(x)
+classification = np.where(res == np.amax(res))[1][0]
+imshow(img)
+print(str(res[0][classification]*100) + '% Confidence This Is A ' + names(classification))
