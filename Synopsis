@@ -1,0 +1,57 @@
+Introduction
+
+The human body is composed of several organs, each responsible for different functions. The action of these organs are governed by the most vital and critical organ known as 'brain'. The body cannot perform a single task without the signals being transmitted through the brain. Thus, it depends on the healthy state of this most important organ. There can be a situation where the brain stops functioning properly. One of the common reasons for this dysfunction is 'brain tumor'.
+A tumor is a collection of abnormal cells in the brain as a result of excess growth in an uncontrolled manner. Such alien cells consume the nutrients meant for the healthy cells leading to their death. This is a form of cancer and ultimately causes brain failure. The cancer incidence rate is growing at an alarming rate in the world. Brain Tumor is a major cause of death and responsible for around 11% of all deaths worldwide. Therefore, detection of brain tumors is very important in its earliest stage. Currently, many doctors locate the position and the area of brain tumor by looking at the MR Images of the brain of the patient manually. This may result in inaccurate detection of the tumor and is considered very time consuming. Diagnosing brain cancer begins with taking a thorough personal and family medical history, including symptoms and risk factors for brain cancer. The diagnostic process also includes completing a thorough physical and neurological
+exam. This project deals with a system that uses computer-based procedures to detect tumor blocks in the brain using Convolution Neural Network Algorithm for MRI images of different patients. Different types of image processing techniques like image segmentation, image enhancement and feature extraction are used for the brain tumor detection in the MRI images of the cancer-affected patients. Detection of brain tumor is done by using the following techniques: Image pre-processing, Image segmentation, Feature extraction, and Classification. [1]
+We have built this project using OpenCV coupled with Python language. OpenCV has many built-in libraries and functions for the processing of images. The extensive libraries available in Python helps in making the project even more effective and faster to implement.
+
+
+Objective
+
+The main objective of our project is to write a code that recognizes the concerned contour in the given brain scan and returns the confirmation of presence of brain tumor in positive or negative. The set of training images provided in the database is the ground for our system's final result after a brain scan is checked with its help.
+
+
+Motivation
+
+One of the major advantages of this Brain Tumor Detection System is convenience and assurance. In today's modern world where people can never be free from one or the other aspects of life demanding their attention leaving them little or no time to look after their health, if faced with such a deadly disease as a brain tumor, this system will allows individuals to get to know about the presence of a brain tumor on their own. Even if they have first consulted a doctor regarding their condition, a double-check via this system provides an assurance about the results. If the report is positive, the patient must get the necessary treatment at the earliest. If the report is negative, the person should feel encouraged to lead a healthier lifestyle.
+
+
+Related work
+
+There has been a rapid development of Brain Tumor detection algorithms in the last few years. With the help of Machine Learning Algorithms the tumor can be detected by applying various techniques on the MRI scans of the brain.In training the model , we need a large amount of data set and for this purpose we used Kaggle . We used Google Collab as one can write,share and analyze the code all free over the browser.  
+SOFTWARE REQUIREMENT : 
+Python : It is the high level, interpreted programming language which was developed by Guido van Rossum.
+PIP : It is the package management system for python which allows us to manage software packages written in python.
+NumPy : It is the python library which provides tools to work on multidimensional arrays , matrices etc.
+Keras (with TensorFlow backend 2.3.0 version) - It is a deep learning API used for implementing neural networks.
+Pandas : It is the library provided by python used for manipulation and analysis of data .
+OpenCV: It is the python library which helps us to perform image processing and computer vision tasks.
+Here , we will use an automatic and reliable classification method Convolutional Neural Network (CNN) as it helps us to identify every minute details. [2]
+
+
+Proposed Method
+
+In this project , we used various methods to detect the tumor in the human brain.
+These various methods are mentioned in the flowchart given below.
+Plan of work
+Activity 1: Idea generation
+Activity 2: Research
+Activity 3: planning
+Activity 4: dataset collection
+Activity 5: Programming/Implementation
+Activity 6: Testing/Analysis
+Activity 7: Finishing
+Activity 8: Synopsis
+Activity 9: Presentation
+
+
+Briefing 
+
+In this project, we first import a dataset using keras with tensorflow as backend platform. We then split the dataset into training data and test data using sklearn. After importing data, we create a CNN model where we train and test the model using learning data. It uses training data to first distinguish between brain images with tumor cells and images without tumor cells. Once trained, it runs tests using test data and answer based on its learning from training data. After reaching the required level of accuracy we can conclude our project by displaying results using pandas. 
+The code is written using OpenCV. It runs on Google Colab in which the folders are uploaded from the google drive.  
+
+
+References
+
+[1] Ms. Priya Patil1, Ms. Seema Pawar and Ms. Sunayna Patil. A Review Paper on Brain Tumor Segmentation and Detection.
+[2] Wessam M. Salama and Ahmed Shorky. A Novel Framework for Brain Tumor Detection Based on Convolutional Variational Generative Models.
